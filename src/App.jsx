@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import MoviesList from "./components/MoviesList";
 import "./App.css";
@@ -8,7 +8,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [responseCode, setResponseCode] = useState(200);
 
-  const fetchMoviesHandler = async () => {
+  const fetchMoviesHandler = useCallback(async () => {
     setIsLoading(true);
     setResponseCode(null);
 
@@ -33,7 +33,13 @@ function App() {
     setResponseCode(response.status);
 
     setIsLoading(false);
-  };
+  }, []);
+  // Don't add `movies` as a dependency here because it will result in an infinite loop.
+  // This is because
+
+  useEffect(() => {
+    fetchMoviesHandler();
+  }, []);
 
   let content = <p>Found no Movies</p>;
 
@@ -44,7 +50,7 @@ function App() {
   return (
     <React.Fragment>
       <section>
-        <button onClick={fetchMoviesHandler}> Fetch Movies </button>{" "}
+        <button onClick={fetchMoviesHandler}> Fetch Again... </button>{" "}
       </section>
       <section>{content}</section>
     </React.Fragment>
