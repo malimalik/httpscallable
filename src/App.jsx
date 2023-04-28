@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 
 import MoviesList from "./components/MoviesList";
 import "./App.css";
+import AddMovie from "./components/AddMovie";
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -41,6 +42,22 @@ function App() {
     fetchMoviesHandler();
   }, []);
 
+  async function addMovieHandler(movie) {
+    const res = await fetch(
+      "https://react-https-af2d5-default-rtdb.firebaseio.com/movies.json",
+      {
+        method: "POST",
+        body: JSON.stringify(movie),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const responseData = await res.json();
+    console.log(responseData);
+  }
+
   let content = <p>Found no Movies</p>;
 
   if (movies.length > 0) content = <MoviesList movies={movies} />;
@@ -49,6 +66,9 @@ function App() {
 
   return (
     <React.Fragment>
+      <section>
+        <AddMovie onAddMovie={addMovieHandler} />
+      </section>
       <section>
         <button onClick={fetchMoviesHandler}> Fetch Again... </button>{" "}
       </section>
