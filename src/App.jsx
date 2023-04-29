@@ -13,14 +13,31 @@ function App() {
     setIsLoading(true);
     setResponseCode(null);
 
-    const response = await fetch("https://swapi.dev/api/films/");
+    const response = await fetch(
+      "https://react-https-af2d5-default-rtdb.firebaseio.com/movies.json"
+    );
     if (response.status !== 200) {
       setResponseCode(response.status);
       throw new Error(
         `Sorry, there was an issue , the response code we got was: ${response.status}`
       );
     }
+    // This is called a nested object, we are going through each key and accessing its attributes, just like we
+    // would access attributes to an array
+
+    // loadedMovies allows for a flattened array of objects.
     const data = await response.json();
+    console.log(data);
+    const loadedMovies = [];
+    for (const key in data) {
+      loadedMovies.push({
+        id: key,
+        title: data[key].title,
+        openingText: data[key].openingText,
+        releaseDate: data[key].releaseDate,
+      });
+    }
+
     const transformedMovies = data.results.map((movieData) => {
       return {
         id: movieData.episode_id,
